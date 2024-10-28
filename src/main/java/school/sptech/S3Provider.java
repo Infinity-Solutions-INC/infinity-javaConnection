@@ -4,6 +4,7 @@ import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.InputStream;
 
@@ -27,17 +28,20 @@ public class S3Provider {
     }
 
     public void getS3file() {
-        // Solicitação para obter o objeto
-        GetObjectRequest getS3file = GetObjectRequest.builder()
-                .bucket("nomeBucket")
-                .key("indicadores_trajetoria_educacao_superior_2014_2023.xlsx")
-                .build();
+        try {
+            GetObjectRequest getS3file = GetObjectRequest.builder()
+                    .bucket("nomeBucket")
+                    .key("indicadores_trajetoria_educacao_superior_2014_2023.xlsx")
+                    .build();
 
-        InputStream arquivo = getS3Client().getObject(getS3file);
+            InputStream arquivo = getS3Client().getObject(getS3file);
 
-        LeitorArquivo leitorArquivo = new LeitorArquivo();
+            LeitorArquivo leitorArquivo = new LeitorArquivo();
 
-        leitorArquivo.extrairRegistros(getS3file.key(), arquivo);
+            leitorArquivo.extrairRegistros(getS3file.key(), arquivo);
+        } catch (S3Exception e) {
+            System.out.println("Erro ao obter arquivo do bucket: " + e.getMessage());
+        }
     }
 }
 
