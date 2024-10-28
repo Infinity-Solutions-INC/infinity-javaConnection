@@ -30,9 +30,6 @@ public class ConexaoBD {
 
     public void criarBancoDeDados() {
 
-
-        /*try-with-resources. Fecha automaticamente os recursos ao fim do bloco try, mesmo se houver exceções.
-        * torna o codigo mais limpo e seguro*/
         try (Connection con = DriverManager.getConnection(url, username, passwd);
              Statement statement = con.createStatement()) {
 
