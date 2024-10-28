@@ -141,11 +141,30 @@ public class QuerysBD {
                         Integer.class,
                         registro.getNomeArea()
                 );
+                String nomeInstituicao = "";
+
+                if (registro.getNomeArea().equalsIgnoreCase("Saúde e bem-estar")) {
+                    nomeInstituicao = "Faculdade Saúde";
+                }
+
+                if (registro.getNomeArea().equalsIgnoreCase("Computação e Tecnologias da Informação e Comunicação (TIC)")) {
+                    nomeInstituicao = "Faculdade TI";
+                }
+
+                if (registro.getNomeArea().equalsIgnoreCase("Artes e humanidades")) {
+                    nomeInstituicao = "Faculdade Humanas";
+                }
+
+                Integer codigoInstituicao = jdbcTemplate.queryForObject(
+                        """
+                                SELECT codigo_instituicao FROM instituicao WHERE nome_instituicao = ? limit 1""",
+                        Integer.class,
+                        nomeInstituicao
+                );
 
                 if (!listaCursos.contains(registro.getNomeCurso())) {
-                    connection.update("INSERT INTO curso (nome_curso, fkcodigo_area) values (?, ?)",
-                            registro.getNomeCurso(), codigoArea);
-
+                    connection.update("INSERT INTO curso (nome_curso, fkcodigo_institituicao, fkcodigo_area) values (?, ?, ?)",
+                            registro.getNomeCurso(), codigoInstituicao, codigoArea);
                     listaCursos.add(registro.getNomeCurso());
                 }
 
