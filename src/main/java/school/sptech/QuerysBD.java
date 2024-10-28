@@ -103,6 +103,7 @@ public class QuerysBD {
     public void inserirDados(List<Registro> listaDeRegistros) {
         inserirAreasCursos(listaDeRegistros);
         inserirCursos(listaDeRegistros);
+        inserirTurmas(listaDeRegistros);
     }
 
 //    public void inserirInstituicao() {
@@ -126,11 +127,11 @@ public class QuerysBD {
         }
     }
 
+    ConexaoBD conexaoBD = new ConexaoBD();
+    JdbcTemplate jdbcTemplate = conexaoBD.getConnection();
+
     public void inserirCursos(List<Registro> listaDeRegistros) {
         List<String> listaCursos = new ArrayList<>();
-
-        ConexaoBD conexaoBD = new ConexaoBD();
-        JdbcTemplate jdbcTemplate = conexaoBD.getConnection();
 
         for (Registro registro : listaDeRegistros) {
 
@@ -169,8 +170,30 @@ public class QuerysBD {
                 }
 
             } catch (Exception e) {
-                System.out.println("Erro ao buscar o código da área: " + e.getMessage());
+                System.out.println("Erro ao buscar o código da área, da instituicao ou no insert: " + e.getMessage());
             }
+        }
+    }
+
+    public void inserirTurmas(List<Registro> listaDeRegistros) {
+        try {
+            for (Registro registro : listaDeRegistros) {
+                Integer codigoCurso = jdbcTemplate.queryForObject(
+                        """
+                                SELECT codigo_curso FROM curso WHERE nome_curso = ? limit 1""",
+                        Integer.class,
+                        registro.getNomeCurso()
+                        );
+
+                connection.update("""
+                        INSERT INTO turma (ano_turma, qtd_ingressantes, qtd_alunos_permanencia, fkcodigo_curso)
+                        values (?, ?, ?, ?)
+                        """, registro.getAnoTurma(), registro.getQtdIngressantes(),
+                        registro.getQtdAlunosPermanencia(), codigoCurso);
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao buscar o código da área: " + e.getMessage());
+
         }
     }
 }
