@@ -4,9 +4,12 @@ import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.io.InputStream;
+import java.util.List;
 
 public class S3Provider {
 
@@ -28,10 +31,34 @@ public class S3Provider {
     }
 
     public void getS3file() {
+        S3Client s3Client = new S3Provider().getS3Client();
+        String bucketName = "nomeDoBucket";
+
+        String nomeArquivoExcel = "";
+
+        try {
+            ListObjectsRequest listObjects = ListObjectsRequest.builder()
+                    .bucket(bucketName)
+                    .build();
+
+            List<S3Object> objects = s3Client.listObjects(listObjects).contents();
+
+
+            for (S3Object object : objects) {
+                Boolean objetoExcel = object.key().endsWith(".xlsx") || object.key().endsWith(".xls");
+
+                if (objetoExcel) {
+                    nomeArquivoExcel = object.key();
+                }
+            }
+        } catch (S3Exception e) {
+            System.err.println("Erro ao listar objetos no bucket: " + e.getMessage());
+        }
+
         try {
             GetObjectRequest getS3file = GetObjectRequest.builder()
-                    .bucket("nomeBucket")
-                    .key("indicadores_trajetoria_educacao_superior_2014_2023.xlsx")
+                    .bucket(bucketName)
+                    .key(nomeArquivoExcel)
                     .build();
 
             InputStream arquivo = getS3Client().getObject(getS3file);
