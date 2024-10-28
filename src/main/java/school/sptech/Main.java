@@ -11,18 +11,18 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        ConexaoBD conexaoBd = new ConexaoBD();
+
+        conexaoBd.criarBancoDeDados();
 
         String nomeArquivo = "C:\\Users\\2\\Desktop\\indicadores_trajetoria_educacao_superior_2014_2023.xlsx";
 
-        // Carregando o arquivo excel
         Path caminho = Path.of(nomeArquivo);
         InputStream arquivo = Files.newInputStream(caminho);
 
-        // Extraindo os livros do arquivo
         LeitorArquivo leitorArquivo = new LeitorArquivo();
         List<Registro> resposta = leitorArquivo.extrairRegistros(nomeArquivo, arquivo);
 
-        // Fechando o arquivo após a extração
         arquivo.close();
 
         System.out.println(resposta);
