@@ -38,7 +38,7 @@ public class QuerysBD {
         connection.execute("""
                         create table IF NOT EXISTS curso (
                         	codigo_curso int primary key auto_increment,
-                            nome_curso varchar(60),
+                            nome_curso varchar(120),
                             fkcodigo_instituicao int,
                             fkcodigo_area int,
                            \s
@@ -68,7 +68,7 @@ public class QuerysBD {
                         	codigo_turma int primary key auto_increment,
                             ano_turma int not null,
                         	qtd_ingressantes int not null,
-                            qtd_alunos_permanencia not null,\s
+                            qtd_alunos_permanencia int not null,\s
                             fkcodigo_curso int,
                            \s
                             constraint fk_turma_curso foreign key (fkcodigo_curso) references curso(codigo_curso)
@@ -102,26 +102,27 @@ public class QuerysBD {
 
     public void inserirDados(List<Registro> listaDeRegistros) {
         inserirAreasCursos(listaDeRegistros);
+        inserirInstituicao();
         inserirCursos(listaDeRegistros);
         inserirTurmas(listaDeRegistros);
     }
 
-//    public void inserirInstituicao() {
-//        connection.update("""
-//                INSERT INTO instituicao (nome_instituicao)
-//                values
-//                ("Faculdade Saúde"),
-//                ("Faculdade TI"),
-//                ("Faculdade Humanas")
-//                 """);
-//    }
+    public void inserirInstituicao() {
+        connection.update("""
+                INSERT INTO instituicao (nome_instituicao)
+                values
+                ("Faculdade Saúde"),
+                ("Faculdade TI"),
+                ("Faculdade Humanas")
+                 """);
+    }
 
     public void inserirAreasCursos(List<Registro> listaDeRegistros) {
         List<String> listaNomesAreas = new ArrayList<>();
 
         for (Registro registro : listaDeRegistros) {
             if (!listaNomesAreas.contains(registro.getNomeArea())) {
-                connection.update("INSERT INTO area_curso (codigo_area, nome_area) values (?)", registro.getNomeArea());
+                connection.update("INSERT INTO area_curso (nome_area) values (?)", registro.getNomeArea());
                 listaNomesAreas.add(registro.getNomeArea());
             }
         }
@@ -164,7 +165,7 @@ public class QuerysBD {
                 );
 
                 if (!listaCursos.contains(registro.getNomeCurso())) {
-                    connection.update("INSERT INTO curso (nome_curso, fkcodigo_institituicao, fkcodigo_area) values (?, ?, ?)",
+                    connection.update("INSERT INTO curso (nome_curso, fkcodigo_instituicao, fkcodigo_area) values (?, ?, ?)",
                             registro.getNomeCurso(), codigoInstituicao, codigoArea);
                     listaCursos.add(registro.getNomeCurso());
                 }
