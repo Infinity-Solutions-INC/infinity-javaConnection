@@ -29,10 +29,9 @@ public class Main {
 
         LeitorArquivo leitorArquivo = new LeitorArquivo();
         List<Registro> resposta = leitorArquivo.extrairRegistros(nomeArquivo, arquivo);
-        /*comentar até aqui*/
-
 
         arquivo.close();
+        /*comentar até aqui*/
 
         System.out.println(resposta);
 
