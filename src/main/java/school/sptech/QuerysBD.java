@@ -105,15 +105,15 @@ public class QuerysBD {
         inserirCursos(listaDeRegistros);
     }
 
-    public void inserirInstituicao() {
-        connection.update("""
-                INSERT INTO instituicao (nome_instituicao) 
-                values 
-                ("Faculdade Saúde"),
-                ("Faculdade TI"),
-                ("Faculdade Humanas")
-                 """);
-    }
+//    public void inserirInstituicao() {
+//        connection.update("""
+//                INSERT INTO instituicao (nome_instituicao)
+//                values
+//                ("Faculdade Saúde"),
+//                ("Faculdade TI"),
+//                ("Faculdade Humanas")
+//                 """);
+//    }
 
     public void inserirAreasCursos(List<Registro> listaDeRegistros) {
         List<String> listaNomesAreas = new ArrayList<>();
@@ -137,7 +137,7 @@ public class QuerysBD {
             try {
                 Integer codigoArea = jdbcTemplate.queryForObject(
                         """
-                                SELECT codigo_area FROM area_curso WHERE nome_area = "?" limit 1""",
+                                SELECT codigo_area FROM area_curso WHERE nome_area = ? limit 1""",
                         Integer.class,
                         registro.getNomeArea()
                 );
