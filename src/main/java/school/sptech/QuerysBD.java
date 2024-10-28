@@ -15,6 +15,16 @@ public class QuerysBD {
 
 
         connection.execute("""
+                         create table IF NOT EXISTS arquivoLido(
+                         	id int primary key auto_increment,
+                             nome_arquivo varchar(200),
+                         	status_arquivo varchar(30),
+                            \s
+                             constraint chk_status check (status_arquivo in("Lido"))
+                         );
+                """);
+
+        connection.execute("""
                          create table IF NOT EXISTS prompt_ia (
                                  	codigo_prompt int primary key auto_increment,
                                      descricao_prompt varchar(100)
@@ -115,6 +125,23 @@ public class QuerysBD {
                 ("Faculdade TI"),
                 ("Faculdade Humanas")
                  """);
+    }
+
+    public Boolean alterarStatusArquivo(String nomeArquivo) {
+        String statusArquivo = jdbcTemplate.queryForObject(
+                """
+                        SELECT status_arquivo FROM arquivoLido WHERE nome_arquivo = ? limit 1""",
+                String.class,
+                nomeArquivo
+        );
+
+        if (!statusArquivo.equalsIgnoreCase("Lido")) {
+            connection.update("INSERT INTO arquivoLido (nome_arquivo, status_arquivo) values (?, ?)",
+                    nomeArquivo, "Lido");
+            return true;
+        }
+
+            return false;
     }
 
     public void inserirAreasCursos(List<Registro> listaDeRegistros) {

@@ -64,8 +64,15 @@ public class S3Provider {
             InputStream arquivo = getS3Client().getObject(getS3file);
 
             LeitorArquivo leitorArquivo = new LeitorArquivo();
+            QuerysBD querys = new QuerysBD();
+            Boolean arquivoJaLido = querys.alterarStatusArquivo(nomeArquivoExcel);
 
-            leitorArquivo.extrairRegistros(getS3file.key(), arquivo);
+            if (arquivoJaLido) {
+                System.out.println("Arquivo ja foi lido!");
+            } else {
+                leitorArquivo.extrairRegistros(getS3file.key(), arquivo);
+            }
+
         } catch (S3Exception e) {
             System.out.println("Erro ao obter arquivo do bucket: " + e.getMessage());
         }
