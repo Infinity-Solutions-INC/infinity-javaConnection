@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.util.List;
 //import java.util.List;
 
-//import org.springframework.jdbc.core.JdbcTemplate;
-
 public class Main {
     public static void main(String[] args) throws IOException {
         ConexaoBD conexaoBd = new ConexaoBD();
