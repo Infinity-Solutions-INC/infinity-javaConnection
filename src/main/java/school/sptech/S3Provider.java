@@ -22,9 +22,9 @@ public class S3Provider {
 
     public S3Provider() {
         this.credentials = AwsSessionCredentials.create(
-                "ASIAT5KJDZCZO2MFT5EP",
-                "YMXe3v2f8yKV4H8qo+HmLW8jgvp4nEwwtJGIY+k/",
-                "IQoJb3JpZ2luX2VjENz//////////wEaCXVzLXdlc3QtMiJIMEYCIQCm9EYBpaogQye3/T75kQFTrx96GiVoVcWKsGWw6kJIIwIhAKxuRaFeSZhhlQTLhNGYBGhk5/G1sO3yYyY+e67yiFL2KrUCCFUQABoMMjY5MTI1NjY2OTk0IgxWnID4K5L1b/BygtMqkgJW5bW3WBeca8KqinoX/2S6f7LE6mJUA/o0LIoR9CS6CrLTM/ucNFNxwMqXu1ikmkRRCWVA2jJ4b2mbudlGA7snOT0jUTgmsycbZ66DfFV6Wj4ICjzsnJBxrDjl7iGq5Z9U8wicdqkUfn8T0sfYUf365RQG4xGMZdFX48j0LqSk+p/2M/fehLL0rPJNMdEXc0NqXsUxNXPOL/U99g13oCHpsFRYbTLGF+czkEdoJgmF38598gPbJ+IDTAtZJxUa7my1A45FmsPXgBLE1XXYbMc3NXQ73nB8pN+vobtat8Rie8I13M2VbZFhDjFB2nCcIXh0nruAfxtf1Isx5lZ5cUikfIc0pl6c+YHxdN8WED3kLMBjMJO1gbkGOpwBltwrZQ+JXdSL7mjiYHGlFr16WZ6tDx6oimHVGT3B+cslxEFpFkLnCFsszlrPuh3dHygNfDWyavOmMao5djKU/T/eFLBkcvRDnJ3FkQ51DfTtY8F6Aob7IUHwJXn258XWzuR6IQVA5hPMjHgt/ceVoMAL0zNNuwxyT8as0ofYLgCaT1wqx5nIZqs+RnS2Mv4iR7pjeyjKzJpBUMlP"
+                "???",
+                "???",
+                "???"
         );
     }
 
