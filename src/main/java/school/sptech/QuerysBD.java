@@ -128,20 +128,27 @@ public class QuerysBD {
     }
 
     public Boolean alterarStatusArquivo(String nomeArquivo) {
-        String statusArquivo = jdbcTemplate.queryForObject(
+        List<String> resultados = jdbcTemplate.query(
                 """
-                        SELECT status_arquivo FROM arquivoLido WHERE nome_arquivo = ? limit 1""",
-                String.class,
-                nomeArquivo
+                SELECT status_arquivo FROM arquivoLido WHERE nome_arquivo = ? LIMIT 1
+                """,
+                new Object[]{nomeArquivo},
+                (rs, rowNum) -> rs.getString("status_arquivo")
         );
 
-        if (!statusArquivo.equalsIgnoreCase("Lido")) {
+        if (resultados.isEmpty()) {
             connection.update("INSERT INTO arquivoLido (nome_arquivo, status_arquivo) values (?, ?)",
                     nomeArquivo, "Lido");
-            return true;
+            return false;
+
+        } else {
+            String statusArquivo = resultados.get(0);
+            return true; // ou alguma lógica que você deseja implementar
         }
 
-            return false;
+
+
+
     }
 
     public void inserirAreasCursos(List<Registro> listaDeRegistros) {

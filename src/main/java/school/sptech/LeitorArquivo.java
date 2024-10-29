@@ -15,11 +15,12 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class LeitorArquivo {
-    public List<Registro> extrairRegistros(String nomeArquivo, InputStream arquivo) {
+    public void extrairRegistros(String nomeArquivo, InputStream arquivo) {
 
         IOUtils.setByteArrayMaxOverride(10000 * 1024 * 1024);
-
+        LogSistema log = new LogSistema();
         try {
+            log.mandarMensagemParaLog("Iniciando leitura do arquivo: %s".formatted(nomeArquivo));
             System.out.println("\nIniciando leitura do arquivo %s\n".formatted(nomeArquivo));
 
             Workbook workbook;
@@ -37,7 +38,7 @@ public class LeitorArquivo {
             for (Row row : sheet) {
 
                 if (row.getRowNum() >= 10) {
-                    Cell celulaNomeCurso = row.getCell(12);
+                    Cell celulaNomeCurso  = row.getCell(12);
                     Cell celulaNomeAreaCurso = row.getCell(14);
                     Cell celulaAnoReferencia = row.getCell(16);
                     Cell celulaQtdIngressantes = row.getCell(21);
@@ -69,9 +70,12 @@ public class LeitorArquivo {
             }
 
             workbook.close();
-
+            log.mandarMensagemParaLog("leitura finalizada");
             System.out.println("LEITURA FINALIZADA");
-            return dadosCapturados;
+            QuerysBD query = new QuerysBD();
+            log.mandarMensagemParaLog("Inicializando inserção no banco");
+            query.inserirDados(dadosCapturados);
+            log.mandarMensagemParaLog("inserção no banco finalizada");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
