@@ -13,6 +13,19 @@ public class QuerysBD {
 
     public void criarTabelas() {
 
+        connection.execute("""
+                create table IF NOT EXISTS nivel_acesso (
+                	codido_nvl_acesso int primary key auto_increment,
+                    nome_acesso varchar(30) not null\s
+                );
+                """);
+
+        connection.execute("""
+                        create table IF NOT EXISTS cargo (
+                        	codigo_cargo int primary key auto_increment,
+                            nome_cargo varchar(30) not null
+                        );
+                """);
 
         connection.execute("""
                          create table IF NOT EXISTS arquivoLido(
@@ -40,8 +53,9 @@ public class QuerysBD {
 
         connection.execute("""
                         create table IF NOT EXISTS instituicao (
-                        	codigo_instituicao int primary key auto_increment,
-                            nome_instituicao varchar(60) not null
+                        	codigo_instituicao int primary key auto_increment,	
+                            nome_instituicao varchar(60) not null,
+                            cnpj_instituicao varchar(9)
                         ) auto_increment = 100;
                 """);
 
@@ -61,14 +75,17 @@ public class QuerysBD {
                         create table IF NOT EXISTS funcionario (
                         	codigo_funcionario char(6) primary key not null,
                             nome_funcionario varchar(60) not null,
-                            cargo_funcionario varchar(40) not null,
+                            fkcodigo_cargo int not null,
                             cpf_funcionario char(11) not null,
                             email_funcionario varchar(60) ,
                             senha_funcionario varchar(200) ,
-                            status_funcionario varchar(30),
+                            status_funcionario varchar(10),
+                            fkcodigo_nvlAcesso int not null,
                             fkcodigo_instituicao int not null,
                            \s
                             constraint fk_funcionario_instituicao foreign key (fkcodigo_instituicao) references instituicao(codigo_instituicao),
+                            constraint fk_funcionario_nvlAcesso foreign key (fkcodigo_nvlAcesso) references nivel_acesso(codigo_nvl_acesso),
+                            constraint fk_funcionario_cargo foreign key (fkcodigo_cargo) references cargo(codigo_cargo),
                             constraint chk_funcionario_status check (status_funcionario in("ativo", "bloqueado"))
                         );
                 """);
@@ -124,14 +141,14 @@ public class QuerysBD {
                 ("Faculdade Saúde"),
                 ("Faculdade TI"),
                 ("Faculdade Humanas")
-                 """);
+                """);
     }
 
     public Boolean alterarStatusArquivo(String nomeArquivo) {
         List<String> resultados = jdbcTemplate.query(
                 """
-                SELECT status_arquivo FROM arquivoLido WHERE nome_arquivo = ? LIMIT 1
-                """,
+                        SELECT status_arquivo FROM arquivoLido WHERE nome_arquivo = ? LIMIT 1
+                        """,
                 new Object[]{nomeArquivo},
                 (rs, rowNum) -> rs.getString("status_arquivo")
         );
@@ -145,8 +162,6 @@ public class QuerysBD {
             String statusArquivo = resultados.get(0);
             return true; // ou alguma lógica que você deseja implementar
         }
-
-
 
 
     }
@@ -218,12 +233,12 @@ public class QuerysBD {
                                 SELECT codigo_curso FROM curso WHERE nome_curso = ? limit 1""",
                         Integer.class,
                         registro.getNomeCurso()
-                        );
+                );
 
                 connection.update("""
-                        INSERT INTO turma (ano_turma, qtd_ingressantes, qtd_alunos_permanencia, fkcodigo_curso)
-                        values (?, ?, ?, ?)
-                        """, registro.getAnoTurma(), registro.getQtdIngressantes(),
+                                INSERT INTO turma (ano_turma, qtd_ingressantes, qtd_alunos_permanencia, fkcodigo_curso)
+                                values (?, ?, ?, ?)
+                                """, registro.getAnoTurma(), registro.getQtdIngressantes(),
                         registro.getQtdAlunosPermanencia(), codigoCurso);
             }
         } catch (Exception e) {
