@@ -18,11 +18,6 @@ import java.util.List;
 
 public class S3Provider {
 
-
-
-
-
-
     private final AwsSessionCredentials credentials;
 
     public S3Provider() {

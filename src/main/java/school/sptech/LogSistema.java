@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 public class LogSistema {
     private String nomeArquivo = "arquivo.log";
+
     public void mandarMensagemParaLog (String mensagem){
         LocalDateTime data = LocalDateTime.now();
         DateTimeFormatter FORMATO_DIA = DateTimeFormatter.ofPattern("dd/MM/yyyy-HH:mm:ss:: ");
