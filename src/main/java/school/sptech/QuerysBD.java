@@ -31,10 +31,10 @@ public class QuerysBD {
                 """);
 
         connection.execute("""
-                         create table IF NOT EXISTS prompt_ia (
-                                 	codigo_prompt int primary key auto_increment,
-                                     descricao_prompt varchar(100)
-                                 );
+                        create table IF NOT EXISTS prompt_ia (
+                        	codigo_prompt int primary key auto_increment,
+                            descricao_prompt varchar(100)
+                        );
                 """);
 
         connection.execute("""
@@ -48,7 +48,7 @@ public class QuerysBD {
                         create table IF NOT EXISTS instituicao (
                         	codigo_instituicao int primary key auto_increment,	
                             nome_instituicao varchar(60) not null,
-                            cnpj_instituicao varchar(9)
+                            cnpj_instituicao varchar(14)
                         ) auto_increment = 100;
                 """);
 
@@ -56,6 +56,7 @@ public class QuerysBD {
                         create table IF NOT EXISTS curso (
                         	codigo_curso int primary key auto_increment,
                             nome_curso varchar(120),
+                            ano_curso int,
                             fkcodigo_instituicao int,
                             fkcodigo_area int,
                            \s
@@ -72,12 +73,12 @@ public class QuerysBD {
                             cpf_funcionario char(11) not null,
                             email_funcionario varchar(60) ,
                             senha_funcionario varchar(200) ,
-                            status_funcionario varchar(10),
+                            status_funcionario varchar(30),
                             fkcodigo_instituicao int not null,
                            \s
                             constraint fk_funcionario_instituicao foreign key (fkcodigo_instituicao) references instituicao(codigo_instituicao),
                             constraint fk_funcionario_cargo foreign key (fkcodigo_cargo) references cargo(codigo_cargo),
-                            constraint chk_funcionario_status check (status_funcionario in("ativo", "bloqueado"))
+                            constraint chk_funcionario_status check (status_funcionario in("ativo", "bloqueado", "aguardando verificacao"))
                         );
                 """);
 
