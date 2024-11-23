@@ -2,7 +2,6 @@ package school.sptech;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class LeitorArquivo {
-    public void extrairRegistros(String nomeArquivo, InputStream arquivo) {
+    public List<Registro> extrairRegistros(String nomeArquivo, InputStream arquivo) {
 
         IOUtils.setByteArrayMaxOverride(10000 * 1024 * 1024);
         LogSistema log = new LogSistema();
@@ -80,5 +79,6 @@ public class LeitorArquivo {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 }

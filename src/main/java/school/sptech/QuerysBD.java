@@ -14,13 +14,6 @@ public class QuerysBD {
     public void criarTabelas() {
 
         connection.execute("""
-                create table IF NOT EXISTS nivel_acesso (
-                	codido_nvl_acesso int primary key auto_increment,
-                    nome_acesso varchar(30) not null\s
-                );
-                """);
-
-        connection.execute("""
                         create table IF NOT EXISTS cargo (
                         	codigo_cargo int primary key auto_increment,
                             nome_cargo varchar(30) not null
@@ -80,11 +73,9 @@ public class QuerysBD {
                             email_funcionario varchar(60) ,
                             senha_funcionario varchar(200) ,
                             status_funcionario varchar(10),
-                            fkcodigo_nvlAcesso int not null,
                             fkcodigo_instituicao int not null,
                            \s
                             constraint fk_funcionario_instituicao foreign key (fkcodigo_instituicao) references instituicao(codigo_instituicao),
-                            constraint fk_funcionario_nvlAcesso foreign key (fkcodigo_nvlAcesso) references nivel_acesso(codigo_nvl_acesso),
                             constraint fk_funcionario_cargo foreign key (fkcodigo_cargo) references cargo(codigo_cargo),
                             constraint chk_funcionario_status check (status_funcionario in("ativo", "bloqueado"))
                         );
