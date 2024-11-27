@@ -2,19 +2,19 @@ package school.sptech;
 
 import com.mysql.cj.log.Log;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class S3Provider {
 
@@ -22,7 +22,7 @@ public class S3Provider {
 
     public S3Provider() {
         this.credentials = AwsSessionCredentials.create(
-                System.getenv("AWS_ACCESS_KEY"),
+                System.getenv("AWS_ACCESS_KEY_ID"),
                 System.getenv("AWS_SECRET_ACCESS_KEY"),
                 System.getenv("AWS_SESSION_TOKEN")
         );
@@ -89,6 +89,29 @@ public class S3Provider {
             log.mandarMensagemParaLog("Erro ao obter arquivo do bucket: " + e.getMessage());
             System.out.println("Erro ao obter arquivo do bucket: " + e.getMessage());
         }
+    }
+    public void postS3file(String caminho, String nomeArquivoLog) {
+        LogSistema log = new LogSistema();
+        log.mandarMensagemParaLog("arquivo sendo enviado ao S3");
+        S3Client s3Client = new S3Provider().getS3Client();
+        String bucketName = "infinity-bucket";
+        caminho = caminho + nomeArquivoLog;
+
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(nomeArquivoLog)
+                    .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromFile(Paths.get(caminho)));
+            log.mandarMensagemParaLog("arquivo enviado ao S3");
+            System.out.println("arquivo enviado ao S3");
+
+        } catch (S3Exception e) {
+            log.mandarMensagemParaLog("Erro ao subir arquivo no bucket: " + e.getMessage());
+            System.err.println("Erro ao subir arquivo no bucket: " + e.getMessage());
+        }
+
+
     }
 }
 
