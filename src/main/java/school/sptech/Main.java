@@ -29,11 +29,9 @@ public class Main {
 //        s3.getS3file();
 
         /*comentar quando NAO for testar com um arquivo da maquina pessoal*/
-<<<<<<< HEAD
         String nomeArquivo = "C:\\Users\\2\\Desktop\\faculdade-matogrosso.xlsx";
-=======
-        String nomeArquivo = "C:\\Users\\ggame\\Desktop\\indicadores_trajetoria_educacao_superior_2014_2023.xlsx";
->>>>>>> aa2f9fdce87e263cd187fb6fab0af47cbd88d117
+//        String nomeArquivo = "C:\\Users\\ggame\\Desktop\\indicadores_trajetoria_educacao_superior_2014_2023.xlsx";
+
 
         Path caminho = Path.of(nomeArquivo);
         InputStream arquivo = Files.newInputStream(caminho);
