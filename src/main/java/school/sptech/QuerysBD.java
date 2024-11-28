@@ -1,9 +1,11 @@
 package school.sptech;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,14 @@ public class QuerysBD {
     JdbcTemplate connection = dbConnectionProvider.getConnection();
 
     public void criarTabelas() {
+
+        connection.execute("""
+                        create table IF NOT EXISTS error_logs (
+                        	id int primary key auto_increment,
+                            mensagem_error text,
+                            dt_hr_captacao_error datetime
+                        );
+                """);
 
         connection.execute("""
                         create table IF NOT EXISTS cargo (
@@ -40,7 +50,7 @@ public class QuerysBD {
         connection.execute("""
                         create table IF NOT EXISTS area_curso (
                         	codigo_area int primary key auto_increment,
-                            nome_area varchar(60)
+                            nome_area varchar(120)
                         );
                 """);
 
@@ -183,35 +193,17 @@ public class QuerysBD {
                         Integer.class,
                         registro.getNomeArea()
                 );
-                String nomeInstituicao = "";
 
-                if (registro.getNomeArea().equalsIgnoreCase("Saúde e bem-estar")) {
-                    nomeInstituicao = "Faculdade Saúde";
-                }
-
-                if (registro.getNomeArea().equalsIgnoreCase("Computação e Tecnologias da Informação e Comunicação (TIC)")) {
-                    nomeInstituicao = "Faculdade TI";
-                }
-
-                if (registro.getNomeArea().equalsIgnoreCase("Artes e humanidades")) {
-                    nomeInstituicao = "Faculdade Humanas";
-                }
-
-                Integer codigoInstituicao = jdbcTemplate.queryForObject(
-                        """
-                                SELECT codigo_instituicao FROM instituicao WHERE nome_instituicao = ? limit 1""",
-                        Integer.class,
-                        nomeInstituicao
-                );
 
                 if (!listaCursos.contains(registro.getNomeCurso())) {
                     connection.update("INSERT INTO curso (nome_curso, fkcodigo_instituicao, fkcodigo_area) values (?, ?, ?)",
-                            registro.getNomeCurso(), codigoInstituicao, codigoArea);
+                            registro.getNomeCurso(), 100, codigoArea);
                     listaCursos.add(registro.getNomeCurso());
                 }
 
             } catch (Exception e) {
                 System.out.println("Erro ao buscar o código da área, da instituicao ou no insert: " + e.getMessage());
+                inserirMensagemErro(e.getMessage());
             }
         }
     }
@@ -234,7 +226,14 @@ public class QuerysBD {
             }
         } catch (Exception e) {
             System.out.println("Erro ao buscar o código da área: " + e.getMessage());
-
+            inserirMensagemErro(e.getMessage());
         }
+    }
+
+    public void inserirMensagemErro(String mensagemErro) {
+        connection.update("""
+                        INSERT INTO error_logs (mensagem_error, dt_hr_captacao_error)
+                        values (?, ?)
+                        """, mensagemErro, LocalDateTime.now());
     }
 }

@@ -24,6 +24,8 @@ public class LogSistema {
             writer.newLine();       // Adicionar uma nova linha após a mensagem
         } catch (IOException e) {
             System.err.println("Erro ao gravar no arquivo: " + e.getMessage());
+            QuerysBD query = new QuerysBD();
+            query.inserirMensagemErro(e.getMessage());
         }
     }
 }

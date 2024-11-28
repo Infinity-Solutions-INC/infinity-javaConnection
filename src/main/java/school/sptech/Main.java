@@ -29,12 +29,13 @@ public class Main {
 //        s3.getS3file();
 
         /*comentar quando NAO for testar com um arquivo da maquina pessoal*/
-        String nomeArquivo = "C:\\Users\\2\\Desktop\\indicadores_trajetoria_educacao_superior_2014_2023.xlsx";
+        String nomeArquivo = "C:\\Users\\2\\Desktop\\faculdade-matogrosso.xlsx";
 
         Path caminho = Path.of(nomeArquivo);
         InputStream arquivo = Files.newInputStream(caminho);
 
         LeitorArquivo leitorArquivo = new LeitorArquivo();
+
         List<Registro> resposta = leitorArquivo.extrairRegistros(nomeArquivo, arquivo);
 
         arquivo.close();

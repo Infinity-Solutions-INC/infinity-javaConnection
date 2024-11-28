@@ -39,6 +39,7 @@ public class S3Provider {
         S3Client s3Client = new S3Provider().getS3Client();
         String bucketName = "infinity-bucket";
         LogSistema log = new LogSistema();
+        QuerysBD query = new QuerysBD();
 
         String nomeArquivoExcel = "";
 
@@ -60,6 +61,7 @@ public class S3Provider {
         } catch (S3Exception e) {
             log.mandarMensagemParaLog("Erro ao listar objetos no bucket: " + e.getMessage());
             System.err.println("Erro ao listar objetos no bucket: " + e.getMessage());
+            query.inserirMensagemErro(e.getMessage());
         }
 
         try {
@@ -88,6 +90,7 @@ public class S3Provider {
         } catch (S3Exception e) {
             log.mandarMensagemParaLog("Erro ao obter arquivo do bucket: " + e.getMessage());
             System.out.println("Erro ao obter arquivo do bucket: " + e.getMessage());
+            query.inserirMensagemErro(e.getMessage());
         }
     }
 }

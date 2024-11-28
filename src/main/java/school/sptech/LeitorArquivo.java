@@ -18,6 +18,7 @@ public class LeitorArquivo {
 
         IOUtils.setByteArrayMaxOverride(10000 * 1024 * 1024);
         LogSistema log = new LogSistema();
+        QuerysBD query = new QuerysBD();
         try {
             log.mandarMensagemParaLog("Iniciando leitura do arquivo: %s".formatted(nomeArquivo));
             System.out.println("\nIniciando leitura do arquivo %s\n".formatted(nomeArquivo));
@@ -54,15 +55,15 @@ public class LeitorArquivo {
                         Integer qtdIngressantes = (int) celulaQtdIngressantes.getNumericCellValue();
                         Integer qtdAlunosPermanencia = (int) celulaQtdAlunosPermanencia.getNumericCellValue();
 
-                        Boolean areasQueVamosUsar = nomeAreaCurso.equals("Saúde e bem-estar") ||
-                                nomeAreaCurso.equals("Computação e Tecnologias da Informação e Comunicação (TIC)") ||
-                                nomeAreaCurso.equals("Artes e humanidades");
+//                        Boolean areasQueVamosUsar = nomeAreaCurso.equals("Saúde e bem-estar") ||
+//                                nomeAreaCurso.equals("Computação e Tecnologias da Informação e Comunicação (TIC)") ||
+//                                nomeAreaCurso.equals("Artes e humanidades");
 
-                        if (areasQueVamosUsar) {
+//                        if (areasQueVamosUsar) {
                             Registro registro = new Registro(nomeCurso, nomeAreaCurso, anoReferencia,
                                     qtdIngressantes, qtdAlunosPermanencia);
                             dadosCapturados.add(registro);
-                        }
+//                        }
                     }
                 }
 
@@ -71,12 +72,12 @@ public class LeitorArquivo {
             workbook.close();
             log.mandarMensagemParaLog("leitura finalizada");
             System.out.println("LEITURA FINALIZADA");
-            QuerysBD query = new QuerysBD();
             log.mandarMensagemParaLog("Inicializando inserção no banco");
             query.inserirDados(dadosCapturados);
             log.mandarMensagemParaLog("inserção no banco finalizada");
 
         } catch (IOException e) {
+            query.inserirMensagemErro(e.getMessage());
             throw new RuntimeException(e);
         }
         return null;
