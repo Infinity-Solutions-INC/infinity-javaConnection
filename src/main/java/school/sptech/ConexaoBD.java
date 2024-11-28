@@ -17,8 +17,8 @@ public class ConexaoBD {
 
     //    private String username = "root";
 //    private String passwd = "010652";
-    private String username = "sptech";
-    private String passwd = "123";
+    private String username = "infinity-solutions";
+    private String passwd = "Infinity#2024";
 
     LogSistema log = new LogSistema();
 
