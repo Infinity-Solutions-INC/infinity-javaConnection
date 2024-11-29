@@ -11,22 +11,20 @@ import java.sql.DriverManager;
 
 public class ConexaoBD {
     private final DataSource dataSource;
-    //    private String url = "jdbc:mysql://localhost:3306/?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-    private String url = "jdbc:mysql://localhost:3306/?useSSL=false&serverTimezone=UTC";
-
+    private String url = "jdbc:mysql://mysql-app:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
 
     private String username = System.getenv("BDUSER");
     private String passwd = System.getenv("BDPASSWD");
-//    private String username = "sptech";
-//    private String passwd = "123";
+
 
     LogSistema log = new LogSistema();
 
     public ConexaoBD() {
         criarBancoDeDados();
         BasicDataSource basicDataSource = new BasicDataSource();
-//        basicDataSource.setUrl("jdbc:mysql://localhost:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true");
-        basicDataSource.setUrl("jdbc:mysql://localhost:3306/infinity_solutions?useSSL=false&serverTimezone=UTC");
+      
+        basicDataSource.setUrl("jdbc:mysql://localhost:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true");
+
         basicDataSource.setUsername(username);
         basicDataSource.setPassword(passwd);
         this.dataSource = basicDataSource;
@@ -43,7 +41,7 @@ public class ConexaoBD {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            log.mandarMensagemParaLog("Erro ao obter arquivo do bucket: " + e.getMessage());
+            log.mandarMensagemParaLog("Erro ao criar banco: " + e.getMessage());
             e.printStackTrace();
         }
     }

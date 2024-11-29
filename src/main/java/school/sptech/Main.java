@@ -21,11 +21,14 @@ public class Main {
 //        QuerysBD query = new QuerysBD();
 //
 //        query.criarTabelas();
-
-        /* tirar o comentario quando usar o s3*/
+        conexaoBd.criarBancoDeDados();
 
         S3Provider s3 = new S3Provider();
         s3.getS3file();
+        log.mandarLogParaS3();
+
+        /* tirar o comentario quando usar o s3*/
+
 
         /*comentar quando NAO for testar com um arquivo da maquina pessoal*/
 //        String nomeArquivo = "C:\\Users\\2\\Desktop\\indicadores_trajetoria_educacao_superior_2014_2023.xlsx";
