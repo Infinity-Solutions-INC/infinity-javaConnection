@@ -131,19 +131,8 @@ public class QuerysBD {
 
     public void inserirDados(List<Registro> listaDeRegistros) {
         inserirAreasCursos(listaDeRegistros);
-        inserirInstituicao();
         inserirCursos(listaDeRegistros);
         inserirTurmas(listaDeRegistros);
-    }
-
-    public void inserirInstituicao() {
-        connection.update("""
-                INSERT INTO instituicao (nome_instituicao)
-                values
-                ("Faculdade Saúde"),
-                ("Faculdade TI"),
-                ("Faculdade Humanas")
-                """);
     }
 
     public Boolean alterarStatusArquivo(String nomeArquivo) {
@@ -164,7 +153,6 @@ public class QuerysBD {
             String statusArquivo = resultados.get(0);
             return true; // ou alguma lógica que você deseja implementar
         }
-
 
     }
 

@@ -33,6 +33,8 @@ public class LeitorArquivo {
 
             Sheet sheet = workbook.getSheetAt(0);
 
+            System.out.println(sheet.getLastRowNum() + 1);
+
             List<Registro> dadosCapturados = new ArrayList<>();
 
             for (Row row : sheet) {

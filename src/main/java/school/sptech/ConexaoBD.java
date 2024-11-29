@@ -15,10 +15,10 @@ public class ConexaoBD {
     private String url = "jdbc:mysql://localhost:3306/?useSSL=false&serverTimezone=UTC";
 
 
-    //    private String username = "root";
-//    private String passwd = "010652";
-    private String username = "sptech";
-    private String passwd = "123";
+    private String username = System.getenv("BDUSER");
+    private String passwd = System.getenv("BDPASSWD");
+//    private String username = "sptech";
+//    private String passwd = "123";
 
     LogSistema log = new LogSistema();
 
