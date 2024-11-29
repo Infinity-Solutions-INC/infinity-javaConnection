@@ -36,6 +36,8 @@ public class LogSistema {
             writer.newLine();
         } catch (IOException e) {
             System.err.println("Erro ao gravar no arquivo: " + e.getMessage());
+            QuerysBD query = new QuerysBD();
+            query.inserirMensagemErro(e.getMessage());
         }
     }
     public void mandarLogParaS3(){

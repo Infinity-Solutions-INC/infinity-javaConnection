@@ -13,15 +13,18 @@ public class ConexaoBD {
     private final DataSource dataSource;
     private String url = "jdbc:mysql://mysql-app:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
 
-    private String username = "root";
-    private String passwd = "rootpassword";
+    private String username = System.getenv("BDUSER");
+    private String passwd = System.getenv("BDPASSWD");
+
 
     LogSistema log = new LogSistema();
 
     public ConexaoBD() {
         criarBancoDeDados();
         BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setUrl("jdbc:mysql://mysql-app:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true");
+      
+        basicDataSource.setUrl("jdbc:mysql://localhost:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true");
+
         basicDataSource.setUsername(username);
         basicDataSource.setPassword(passwd);
         this.dataSource = basicDataSource;

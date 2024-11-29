@@ -2,7 +2,6 @@ package school.sptech;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +14,11 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class LeitorArquivo {
-    public void extrairRegistros(String nomeArquivo, InputStream arquivo) {
+    public List<Registro> extrairRegistros(String nomeArquivo, InputStream arquivo) {
 
         IOUtils.setByteArrayMaxOverride(10000 * 1024 * 1024);
         LogSistema log = new LogSistema();
+        QuerysBD query = new QuerysBD();
         try {
             log.mandarMensagemParaLog("Iniciando leitura do arquivo: %s".formatted(nomeArquivo));
             System.out.println("\nIniciando leitura do arquivo %s\n".formatted(nomeArquivo));
@@ -32,6 +32,8 @@ public class LeitorArquivo {
             }
 
             Sheet sheet = workbook.getSheetAt(0);
+
+            System.out.println(sheet.getLastRowNum() + 1);
 
             List<Registro> dadosCapturados = new ArrayList<>();
 
@@ -55,15 +57,15 @@ public class LeitorArquivo {
                         Integer qtdIngressantes = (int) celulaQtdIngressantes.getNumericCellValue();
                         Integer qtdAlunosPermanencia = (int) celulaQtdAlunosPermanencia.getNumericCellValue();
 
-                        Boolean areasQueVamosUsar = nomeAreaCurso.equals("Saúde e bem-estar") ||
-                                nomeAreaCurso.equals("Computação e Tecnologias da Informação e Comunicação (TIC)") ||
-                                nomeAreaCurso.equals("Artes e humanidades");
+//                        Boolean areasQueVamosUsar = nomeAreaCurso.equals("Saúde e bem-estar") ||
+//                                nomeAreaCurso.equals("Computação e Tecnologias da Informação e Comunicação (TIC)") ||
+//                                nomeAreaCurso.equals("Artes e humanidades");
 
-                        if (areasQueVamosUsar) {
+//                        if (areasQueVamosUsar) {
                             Registro registro = new Registro(nomeCurso, nomeAreaCurso, anoReferencia,
                                     qtdIngressantes, qtdAlunosPermanencia);
                             dadosCapturados.add(registro);
-                        }
+//                        }
                     }
                 }
 
@@ -72,13 +74,14 @@ public class LeitorArquivo {
             workbook.close();
             log.mandarMensagemParaLog("leitura finalizada");
             System.out.println("LEITURA FINALIZADA");
-            QuerysBD query = new QuerysBD();
             log.mandarMensagemParaLog("Inicializando inserção no banco");
             query.inserirDados(dadosCapturados);
             log.mandarMensagemParaLog("inserção no banco finalizada");
 
         } catch (IOException e) {
+            query.inserirMensagemErro(e.getMessage());
             throw new RuntimeException(e);
         }
+        return null;
     }
 }

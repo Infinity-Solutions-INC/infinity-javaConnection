@@ -1,9 +1,11 @@
 package school.sptech;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +16,11 @@ public class QuerysBD {
     public void criarTabelas() {
 
         connection.execute("""
-                create table IF NOT EXISTS nivel_acesso (
-                	codido_nvl_acesso int primary key auto_increment,
-                    nome_acesso varchar(30) not null\s
-                );
+                        create table IF NOT EXISTS error_logs (
+                        	id int primary key auto_increment,
+                            mensagem_error text,
+                            dt_hr_captacao_error datetime
+                        );
                 """);
 
         connection.execute("""
@@ -38,16 +41,16 @@ public class QuerysBD {
                 """);
 
         connection.execute("""
-                         create table IF NOT EXISTS prompt_ia (
-                                 	codigo_prompt int primary key auto_increment,
-                                     descricao_prompt varchar(100)
-                                 );
+                        create table IF NOT EXISTS prompt_ia (
+                        	codigo_prompt int primary key auto_increment,
+                            descricao_prompt varchar(100)
+                        );
                 """);
 
         connection.execute("""
                         create table IF NOT EXISTS area_curso (
                         	codigo_area int primary key auto_increment,
-                            nome_area varchar(60)
+                            nome_area varchar(120)
                         );
                 """);
 
@@ -55,7 +58,7 @@ public class QuerysBD {
                         create table IF NOT EXISTS instituicao (
                         	codigo_instituicao int primary key auto_increment,	
                             nome_instituicao varchar(60) not null,
-                            cnpj_instituicao varchar(9)
+                            cnpj_instituicao varchar(14)
                         ) auto_increment = 100;
                 """);
 
@@ -63,6 +66,7 @@ public class QuerysBD {
                         create table IF NOT EXISTS curso (
                         	codigo_curso int primary key auto_increment,
                             nome_curso varchar(120),
+                            ano_curso int,
                             fkcodigo_instituicao int,
                             fkcodigo_area int,
                            \s
@@ -79,14 +83,12 @@ public class QuerysBD {
                             cpf_funcionario char(11) not null,
                             email_funcionario varchar(60) ,
                             senha_funcionario varchar(200) ,
-                            status_funcionario varchar(10),
-                            fkcodigo_nvlAcesso int not null,
+                            status_funcionario varchar(30),
                             fkcodigo_instituicao int not null,
                            \s
                             constraint fk_funcionario_instituicao foreign key (fkcodigo_instituicao) references instituicao(codigo_instituicao),
-                            constraint fk_funcionario_nvlAcesso foreign key (fkcodigo_nvlAcesso) references nivel_acesso(codigo_nvl_acesso),
                             constraint fk_funcionario_cargo foreign key (fkcodigo_cargo) references cargo(codigo_cargo),
-                            constraint chk_funcionario_status check (status_funcionario in("ativo", "bloqueado"))
+                            constraint chk_funcionario_status check (status_funcionario in("ativo", "bloqueado", "aguardando verificacao"))
                         );
                 """);
 
@@ -129,19 +131,8 @@ public class QuerysBD {
 
     public void inserirDados(List<Registro> listaDeRegistros) {
         inserirAreasCursos(listaDeRegistros);
-        inserirInstituicao();
         inserirCursos(listaDeRegistros);
         inserirTurmas(listaDeRegistros);
-    }
-
-    public void inserirInstituicao() {
-        connection.update("""
-                INSERT INTO instituicao (nome_instituicao)
-                values
-                ("Faculdade Saúde"),
-                ("Faculdade TI"),
-                ("Faculdade Humanas")
-                """);
     }
 
     public Boolean alterarStatusArquivo(String nomeArquivo) {
@@ -162,7 +153,6 @@ public class QuerysBD {
             String statusArquivo = resultados.get(0);
             return true; // ou alguma lógica que você deseja implementar
         }
-
 
     }
 
@@ -192,35 +182,17 @@ public class QuerysBD {
                         Integer.class,
                         registro.getNomeArea()
                 );
-                String nomeInstituicao = "";
 
-                if (registro.getNomeArea().equalsIgnoreCase("Saúde e bem-estar")) {
-                    nomeInstituicao = "Faculdade Saúde";
-                }
-
-                if (registro.getNomeArea().equalsIgnoreCase("Computação e Tecnologias da Informação e Comunicação (TIC)")) {
-                    nomeInstituicao = "Faculdade TI";
-                }
-
-                if (registro.getNomeArea().equalsIgnoreCase("Artes e humanidades")) {
-                    nomeInstituicao = "Faculdade Humanas";
-                }
-
-                Integer codigoInstituicao = jdbcTemplate.queryForObject(
-                        """
-                                SELECT codigo_instituicao FROM instituicao WHERE nome_instituicao = ? limit 1""",
-                        Integer.class,
-                        nomeInstituicao
-                );
 
                 if (!listaCursos.contains(registro.getNomeCurso())) {
                     connection.update("INSERT INTO curso (nome_curso, fkcodigo_instituicao, fkcodigo_area) values (?, ?, ?)",
-                            registro.getNomeCurso(), codigoInstituicao, codigoArea);
+                            registro.getNomeCurso(), 100, codigoArea);
                     listaCursos.add(registro.getNomeCurso());
                 }
 
             } catch (Exception e) {
                 System.out.println("Erro ao buscar o código da área, da instituicao ou no insert: " + e.getMessage());
+                inserirMensagemErro(e.getMessage());
             }
         }
     }
@@ -243,7 +215,14 @@ public class QuerysBD {
             }
         } catch (Exception e) {
             System.out.println("Erro ao buscar o código da área: " + e.getMessage());
-
+            inserirMensagemErro(e.getMessage());
         }
+    }
+
+    public void inserirMensagemErro(String mensagemErro) {
+        connection.update("""
+                        INSERT INTO error_logs (mensagem_error, dt_hr_captacao_error)
+                        values (?, ?)
+                        """, mensagemErro, LocalDateTime.now());
     }
 }
