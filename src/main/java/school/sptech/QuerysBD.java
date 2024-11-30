@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,11 @@ public class QuerysBD {
 
         connection.execute("""
                          create table IF NOT EXISTS arquivoLido(
-                         	id int primary key auto_increment,
-                             nome_arquivo varchar(200),
-                         	status_arquivo varchar(30),
-                            \s
-                             constraint chk_status check (status_arquivo in("Lido"))
+                         id int primary key auto_increment,
+                         nome_arquivo varchar(200),
+                         status_arquivo varchar(30),
+                         qtdTurmasInseridas_arquivo int,
+                         constraint chk_status check (status_arquivo in("Lido"))
                          );
                 """);
 
@@ -145,8 +146,8 @@ public class QuerysBD {
         );
 
         if (resultados.isEmpty()) {
-            connection.update("INSERT INTO arquivoLido (nome_arquivo, status_arquivo) values (?, ?)",
-                    nomeArquivo, "Lido");
+            connection.update("INSERT INTO arquivoLido (nome_arquivo, status_arquivo, dataLeitura_arquivo) values (?, ?, ?)",
+                    nomeArquivo, "Lido", LocalDate.now());
             return false;
 
         } else {
@@ -198,6 +199,8 @@ public class QuerysBD {
     }
 
     public void inserirTurmas(List<Registro> listaDeRegistros) {
+        Integer qtdTurmasInseridas = 0;
+
         try {
             for (Registro registro : listaDeRegistros) {
                 Integer codigoCurso = jdbcTemplate.queryForObject(
@@ -212,17 +215,35 @@ public class QuerysBD {
                                 values (?, ?, ?, ?)
                                 """, registro.getAnoTurma(), registro.getQtdIngressantes(),
                         registro.getQtdAlunosPermanencia(), codigoCurso);
+
+                qtdTurmasInseridas++;
             }
+
+            inserirQtdTurmasInseridas(qtdTurmasInseridas);
+
         } catch (Exception e) {
             System.out.println("Erro ao buscar o código da área: " + e.getMessage());
             inserirMensagemErro(e.getMessage());
         }
     }
 
+    private void inserirQtdTurmasInseridas(Integer qtdTurmasInseridas) {
+
+        String arquivoLidoAgora = jdbcTemplate.queryForObject("""
+                        SELECT nome_arquivo from arquivoLido where qtdTurmasInseridas_arquivo is null;
+                        """,
+                String.class
+        );
+
+        connection.update("""
+                UPDATE arquivoLido set qtdTurmasInseridas_arquivo = ? where nome_arquivo = ?;
+                """, qtdTurmasInseridas, arquivoLidoAgora);
+    }
+
     public void inserirMensagemErro(String mensagemErro) {
         connection.update("""
-                        INSERT INTO error_logs (mensagem_error, dt_hr_captacao_error)
-                        values (?, ?)
-                        """, mensagemErro, LocalDateTime.now());
+                INSERT INTO error_logs (mensagem_error, dt_hr_captacao_error)
+                values (?, ?)
+                """, mensagemErro, LocalDateTime.now());
     }
 }
