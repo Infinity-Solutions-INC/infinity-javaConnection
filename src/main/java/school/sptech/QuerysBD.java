@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,8 +146,8 @@ public class QuerysBD {
         );
 
         if (resultados.isEmpty()) {
-            connection.update("INSERT INTO arquivoLido (nome_arquivo, status_arquivo) values (?, ?)",
-                    nomeArquivo, "Lido");
+            connection.update("INSERT INTO arquivoLido (nome_arquivo, status_arquivo, dataLeitura_arquivo) values (?, ?, ?)",
+                    nomeArquivo, "Lido", LocalDate.now());
             return false;
 
         } else {
