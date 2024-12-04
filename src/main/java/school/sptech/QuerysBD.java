@@ -172,7 +172,6 @@ public class QuerysBD {
     JdbcTemplate jdbcTemplate = conexaoBD.getConnection();
 
     public void inserirCursos(List<Registro> listaDeRegistros) {
-        List<String> listaCursos = new ArrayList<>();
 
         for (Registro registro : listaDeRegistros) {
 
@@ -184,11 +183,11 @@ public class QuerysBD {
                         registro.getNomeArea()
                 );
 
+                Boolean cursoExiste = verificarCursoExiste(registro.getNomeCurso());
 
-                if (!listaCursos.contains(registro.getNomeCurso())) {
+                if (!cursoExiste) {
                     connection.update("INSERT INTO curso (nome_curso, fkcodigo_instituicao, fkcodigo_area) values (?, ?, ?)",
                             registro.getNomeCurso(), 100, codigoArea);
-                    listaCursos.add(registro.getNomeCurso());
                 }
 
             } catch (Exception e) {
@@ -245,5 +244,20 @@ public class QuerysBD {
                 INSERT INTO error_logs (mensagem_error, dt_hr_captacao_error)
                 values (?, ?)
                 """, mensagemErro, LocalDateTime.now());
+    }
+
+    public Boolean verificarCursoExiste(String nomeCurso) {
+        Integer qtdCurso = jdbcTemplate.queryForObject("""
+                        SELECT count(nome_curso) from curso where nome_curso = ?;
+                        """,
+                Integer.class,
+                nomeCurso
+        );
+
+        if (qtdCurso == 0) {
+            return false;
+        }
+
+        return true;
     }
 }
