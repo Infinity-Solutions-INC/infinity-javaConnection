@@ -11,10 +11,12 @@ import java.sql.DriverManager;
 
 public class ConexaoBD {
     private final DataSource dataSource;
-    private String url = "jdbc:mysql://mysql-app:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+    private String url = "jdbc:mysql://mysql-app:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8";
 
-    private String username = System.getenv("BDUSER");
-    private String passwd = System.getenv("BDPASSWD");
+    private String username = System.getenv("DB_USER");
+    private String passwd = System.getenv("DB_PASSWORD");
+//    private String username = "root";
+//    private String passwd = "rootpassword";
 
 
     LogSistema log = new LogSistema();
@@ -23,7 +25,7 @@ public class ConexaoBD {
         criarBancoDeDados();
         BasicDataSource basicDataSource = new BasicDataSource();
       
-        basicDataSource.setUrl("jdbc:mysql://localhost:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true");
+        basicDataSource.setUrl("jdbc:mysql://mysql-app:3306/infinity_solutions?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8");
 
         basicDataSource.setUsername(username);
         basicDataSource.setPassword(passwd);
