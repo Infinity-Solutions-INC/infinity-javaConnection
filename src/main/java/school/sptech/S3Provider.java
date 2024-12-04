@@ -61,7 +61,6 @@ public class S3Provider {
 
                     if (!arquivoJaLido) {
                         nomeArquivoExcel = nomeArquivoExcelAtual;
-                        System.out.println("Arquivo ja processado.");
                         break;
                     }
                 }
@@ -73,21 +72,19 @@ public class S3Provider {
         }
 
         try {
-            GetObjectRequest getS3file = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(nomeArquivoExcel)
-                    .build();
 
-            InputStream arquivo = getS3Client().getObject(getS3file);
-
-            LeitorArquivo leitorArquivo = new LeitorArquivo();
-            Boolean arquivoJaLido = query.alterarStatusArquivo(nomeArquivoExcel);
-
-            if (arquivoJaLido) {
-
+            if (nomeArquivoExcel.isEmpty()) {
                 log.mandarMensagemParaLog("Todos os arquivos ja foram lidos");
 
             } else {
+                GetObjectRequest getS3file = GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(nomeArquivoExcel)
+                        .build();
+
+                InputStream arquivo = getS3Client().getObject(getS3file);
+
+                LeitorArquivo leitorArquivo = new LeitorArquivo();
                 log.mandarMensagemParaLog("Arquivo novo, inicializando extração");
                 leitorArquivo.extrairRegistros(getS3file.key(), arquivo);
                 log.mandarMensagemParaLog("Extração finalizada");
