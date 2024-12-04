@@ -41,6 +41,7 @@ public class S3Provider {
         LogSistema log = new LogSistema();
         QuerysBD query = new QuerysBD();
 
+        String nomeArquivoExcelAtual = "";
         String nomeArquivoExcel = "";
 
         try {
@@ -53,9 +54,16 @@ public class S3Provider {
 
             for (S3Object object : objects) {
                 Boolean objetoExcel = object.key().endsWith(".xlsx") || object.key().endsWith(".xls");
+                nomeArquivoExcelAtual = object.key();
 
                 if (objetoExcel) {
-                    nomeArquivoExcel = object.key();
+                    Boolean arquivoJaLido = query.alterarStatusArquivo(nomeArquivoExcelAtual);
+
+                    if (!arquivoJaLido) {
+                        nomeArquivoExcel = nomeArquivoExcelAtual;
+                        System.out.println("Arquivo ja processado.");
+                        break;
+                    }
                 }
             }
         } catch (S3Exception e) {
@@ -73,8 +81,7 @@ public class S3Provider {
             InputStream arquivo = getS3Client().getObject(getS3file);
 
             LeitorArquivo leitorArquivo = new LeitorArquivo();
-            QuerysBD querys = new QuerysBD();
-            Boolean arquivoJaLido = querys.alterarStatusArquivo(nomeArquivoExcel);
+            Boolean arquivoJaLido = query.alterarStatusArquivo(nomeArquivoExcel);
 
             if (arquivoJaLido) {
 
@@ -93,6 +100,7 @@ public class S3Provider {
             query.inserirMensagemErro(e.getMessage());
         }
     }
+
     public void postS3file(String caminho, String nomeArquivoLog) {
         LogSistema log = new LogSistema();
         log.mandarMensagemParaLog("arquivo sendo enviado ao S3");
